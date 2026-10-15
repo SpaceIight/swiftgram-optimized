@@ -66,12 +66,18 @@ jobs:
           OUTPUT_PATH="build/artifacts"
           rm -rf "$OUTPUT_PATH"
           mkdir -p "$OUTPUT_PATH"
-          find bazel-bin bazel-out -name "*.ipa" -exec cp {} "$OUTPUT_PATH/Swiftgram.ipa" \;
+          if [ -f "bazel-bin/Telegram/Swiftgram.ipa" ]; then
+            cp "bazel-bin/Telegram/Swiftgram.ipa" "$OUTPUT_PATH/Swiftgram.ipa"
+          elif [ -f "bazel-bin/Telegram/Telegram.ipa" ]; then
+            cp "bazel-bin/Telegram/Telegram.ipa" "$OUTPUT_PATH/Swiftgram.ipa"
+          else
+            find -L bazel-bin bazel-out -name "*.ipa" -exec cp {} "$OUTPUT_PATH/Swiftgram.ipa" \;
+          fi
           cp "$OUTPUT_PATH/Swiftgram.ipa" "$OUTPUT_PATH/Telegram.ipa"
 
           mkdir -p build/DSYMs
-          find bazel-bin bazel-out -maxdepth 4 -name "*.dSYM" -exec cp -R {} build/DSYMs/ \;
-          zip -r "./$OUTPUT_PATH/Telegram.DSYMs.zip" build/DSYMs 1>/dev/null
+          find -L bazel-bin bazel-out -maxdepth 5 -name "*.dSYM" -exec cp -R {} build/DSYMs/ \; || true
+          zip -r "./$OUTPUT_PATH/Telegram.DSYMs.zip" build/DSYMs 1>/dev/null || true
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
