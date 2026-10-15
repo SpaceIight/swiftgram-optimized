@@ -66,14 +66,11 @@ jobs:
           OUTPUT_PATH="build/artifacts"
           rm -rf "$OUTPUT_PATH"
           mkdir -p "$OUTPUT_PATH"
-          for f in bazel-out/applebin_ios-ios_arm*-opt-ST-*/bin/Telegram/Telegram.ipa; do
-            cp "$f" $OUTPUT_PATH/
-          done
+          find bazel-bin bazel-out -name "*.ipa" -exec cp {} "$OUTPUT_PATH/Swiftgram.ipa" \;
+          cp "$OUTPUT_PATH/Swiftgram.ipa" "$OUTPUT_PATH/Telegram.ipa"
 
           mkdir -p build/DSYMs
-          for f in bazel-out/applebin_ios-ios_arm*-opt-ST-*/bin/Telegram/*.dSYM; do
-            cp -R "$f" build/DSYMs/
-          done
+          find bazel-bin bazel-out -maxdepth 4 -name "*.dSYM" -exec cp -R {} build/DSYMs/ \;
           zip -r "./$OUTPUT_PATH/Telegram.DSYMs.zip" build/DSYMs 1>/dev/null
 
       - name: Upload IPA Artifact
@@ -93,6 +90,7 @@ jobs:
           draft: false
           prerelease: false
           files: |
+            /Users/Shared/telegram-ios/build/artifacts/Swiftgram.ipa
             /Users/Shared/telegram-ios/build/artifacts/Telegram.ipa
             /Users/Shared/telegram-ios/build/artifacts/Telegram.DSYMs.zip
         env:
