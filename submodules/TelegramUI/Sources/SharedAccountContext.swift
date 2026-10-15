@@ -1092,24 +1092,7 @@ public final class SharedAccountContextImpl: SharedAccountContext {
                 return accounts.map { $0.1.account }
             }, presentationData: self.presentationData, appLockContext: self.appLockContext as! AppLockContextImpl)
             
-            let enableSpotlight = accountManager.sharedData(keys: Set([ApplicationSpecificSharedDataKeys.intentsSettings]))
-            |> map { sharedData -> Bool in
-                let intentsSettings: IntentsSettings = sharedData.entries[ApplicationSpecificSharedDataKeys.intentsSettings]?.get(IntentsSettings.self) ?? .defaultSettings
-                return intentsSettings.contacts
-            }
-            |> distinctUntilChanged
-            self.spotlightDataContext = SpotlightDataContext(appBasePath: applicationBindings.containerPath, accountManager: accountManager, accounts: combineLatest(enableSpotlight, self.activeAccountContexts
-            |> map { _, accounts, _ in
-                return accounts.map { _, account, _ in
-                    return account.account
-                }
-            }) |> map { enableSpotlight, accounts in
-                if enableSpotlight {
-                    return accounts
-                } else {
-                    return []
-                }
-            })
+            self.spotlightDataContext = nil
         }
         
         /*if #available(iOS 13.0, *) {

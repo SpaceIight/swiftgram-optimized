@@ -456,6 +456,8 @@ public final class DefaultAnimatedStickerNodeImpl: ASDisplayNode, AnimatedSticke
     }
         
     public func play(firstFrame: Bool = false, fromIndex: Int? = nil) {
+        var firstFrame = firstFrame
+        firstFrame = true
         if !firstFrame {
             switch self.playbackMode {
             case .once:
@@ -828,11 +830,6 @@ public final class DefaultAnimatedStickerNodeImpl: ASDisplayNode, AnimatedSticke
     }
     
     public func playIfNeeded() -> Bool {
-        if !self.isPlaying {
-            self.isPlaying = true
-            self.play()
-            return true
-        }
         return false
     }
     
