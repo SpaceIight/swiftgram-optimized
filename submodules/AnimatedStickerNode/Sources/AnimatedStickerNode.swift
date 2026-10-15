@@ -456,8 +456,6 @@ public final class DefaultAnimatedStickerNodeImpl: ASDisplayNode, AnimatedSticke
     }
         
     public func play(firstFrame: Bool = false, fromIndex: Int? = nil) {
-        var firstFrame = firstFrame
-        firstFrame = true
         if !firstFrame {
             switch self.playbackMode {
             case .once:
@@ -576,7 +574,7 @@ public final class DefaultAnimatedStickerNodeImpl: ASDisplayNode, AnimatedSticke
                     }
                 }
                 
-                let timer = SwiftSignalKit.Timer(timeout: 1.0 / Double(frameRate), repeat: !firstFrame, completion: {
+                let timer = SwiftSignalKit.Timer(timeout: 1.0 / Double(frameRate), repeat: false, completion: {
                     timerEvent()
                 }, queue: queue)
                 let _ = timerHolder.swap(timer)
@@ -629,7 +627,7 @@ public final class DefaultAnimatedStickerNodeImpl: ASDisplayNode, AnimatedSticke
                 let duration: Double = frameSource.frameRate > 0 ? Double(frameSource.frameCount) / Double(frameSource.frameRate) : 0
                 let frameRate = frameSource.frameRate
                 
-                let timer = SwiftSignalKit.Timer(timeout: 1.0 / Double(frameRate), repeat: !firstFrame, completion: {
+                let timer = SwiftSignalKit.Timer(timeout: 1.0 / Double(frameRate), repeat: false, completion: {
                     let frame = frameQueue.syncWith { frameQueue in
                         return frameQueue.take(draw: true)
                     }
